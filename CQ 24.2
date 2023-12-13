@@ -1,0 +1,39 @@
+Trong Java, một constructor là một phương thức đặc biệt được sử dụng để khởi tạo một đối tượng của một lớp. Constructor được gọi khi một đối tượng của lớp đó được tạo.
+
+Constructor có thể có hoặc không có tham số. Constructor không có tham số được gọi là constructor mặc định. Constructor có tham số được gọi là constructor có tham số.
+
+Constructor có thể được sử dụng để:
+
+* Khởi tạo các thuộc tính của đối tượng.
+* Gọi các phương thức khởi tạo của các lớp cha.
+* Thực hiện bất kỳ logic nào cần thiết để khởi tạo đối tượng.
+
+Dưới đây là ví dụ về một constructor trong Java:
+
+```java
+class MyClass {
+  public MyClass() {
+    // Khởi tạo các thuộc tính của đối tượng
+    this.name = "John Doe";
+    this.age = 30;
+  }
+}
+```
+
+Constructor này không có tham số. Nó khởi tạo hai thuộc tính của đối tượng, `name` và `age`.
+
+Dưới đây là ví dụ về một constructor có tham số trong Java:
+
+```java
+class MyClass {
+  public MyClass(String name, int age) {
+    // Khởi tạo các thuộc tính của đối tượng
+    this.name = name;
+    this.age = age;
+  }
+}
+```
+
+Constructor này có hai tham số, `name` và `age`. Nó khởi tạo hai thuộc tính của đối tượng bằng các giá trị của các tham số đó.
+
+Constructor có thể được sử dụng để khởi tạo các đối tượng của lớp đó theo nhiều cách khác nhau. Việc sử dụng constructor nào phụ thuộc vào nhu cầu cụ thể của ứng dụng.
