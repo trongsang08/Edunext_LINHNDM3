@@ -1,0 +1,206 @@
+thi PE:
+{
+  "ConnectionStrings": {
+    "LuyenDePRN231S2": "server=DESKTOP-671LN6B;database=LuyenDePRN231S2;uid=sa;pwd=123456;Integrated security = True; TrustServerCertificate=True;"
+  }
+}
+
+code dùng conect DB :
+**********************************************************************
+	SqlConnection cnn;
+	SqlDataAdapter da;
+        SqlCommand cmd;
+        
+        private void connectDB()
+        {
+            try
+            {
+                string strCnn = getConectionString();
+                cnn = new SqlConnection(strCnn);
+                cnn.Open();
+                //MessageBox.Show("Connect succesfully");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Connect error :" + ex.Message);
+            }
+        }
+
+        private string getConectionString()
+        {
+            string connectionString;
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+            connectionString = config["ConnectionString:PE_Fall21B5"];
+            return connectionString;
+        }
+
+***********************************************************************
+Entity Framework
+
+if (!optionsBuilder.IsConfigured)
+            {
+                var builder = new ConfigurationBuilder()
+                         .SetBasePath(Directory.GetCurrentDirectory())
+                         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                IConfigurationRoot configuration = builder.Build();
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("PE_PRN_Fall2023B1"));
+            }
+
+***********************************************************************
+DB FIRST
+dotnet ef dbcontext scaffold "Server =DESKTOP-671LN6B; database =PE_PRN_Fall2023B1;Integrated security = True;
+ TrustServerCertificate=True;uid=sa;pwd=123456;" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models
+====== cách2 ====
+dotnet ef dbcontext scaffold "server =(local); database = PE_PRN211_22FallB5;uid=sa;pwd=123456;
+TrustServerCertificate=true" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models
+
+***********************************************************************
+CODE FIRST
+dotnet ef migrations add “InitialDB”
+dotnet ef database update
+
+Tải entity framework cho code first:
+Install-Package EntityFramework
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.Extensions.Configuration
+
+*****************************
+Cấu hình program
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddSingleton(GetMapper());
+builder.Services.AddDbContext<PE_PRN_Spr23B1Context>();
+
+
+// loai bo errol vong lap vong tron
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+});
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+{
+    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+}));
+builder.Services.AddSwaggerGen();
+var app = builder.Build();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("./swagger/v1/swagger.json", "v1");
+        options.RoutePrefix = string.Empty;
+    });
+}
+app.UseCors();
+app.MapControllers();
+
+app.MapGet("/", () => "Hello World!");
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.Run();
+IMapper GetMapper() => new MapperConfiguration(
+            c => c.CreateMap<Director, DirectorDTO>()
+                .ForMember(od => od.Male, opt => opt.MapFrom(o => o.Male == true? "male":"female"))
+
+        ).CreateMapper();
+
+
+=============
+cách 2
+using Microsoft.AspNetCore.OData;
+using Microsoft.EntityFrameworkCore;
+using Q1;
+using Q1.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers().AddOData(x => x.Select().Filter().Count().OrderBy().Expand().SetMaxTop(100));
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORSPolicy", builder =>
+    builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().SetIsOriginAllowed((hosts) => true));
+});
+
+builder.Services.AddDbContext<PRN_Sum22_B1Context>(
+    oprions => oprions.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn"))
+    );
+builder.Services.AddAutoMapper(typeof(MapperConfig));
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseODataBatching();
+
+app.UseCors("CORSPolicy");
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+
+
+
+
+===========
+
+
+[HttpGet("GetAllDirectors")]
+        public ActionResult<List<DirectorDTO>> GetAllDirectorss()
+        {
+            var list = _context.Directors.Include(d => d.Movies)
+                .Select(e=>new{
+                    id= e.Id,
+                    fullanme =e.FullName,
+                    male=e.Male == true ? "male" : "female",
+
+            }).ToList();
+
+            /*return Ok(directors);*/
+            return Ok(list);
+
+        }
+
+--------
+[HttpGet("getorderbydate/{From}/{To}")]
+        public IActionResult GetAllOrder(DateTime From , DateTime To)
+        {
+            var orders = _dbContext.Orders
+           .Include(o => o.Employee)
+           .Include(o => o.Customer)
+           .Include(o => o.Employee!.Department)
+           .Where(o => o.OrderDate >= From && o.OrderDate <= To)
+           .ToList();
+
+            var order = _dbContext.Orders
+           
+           .Where(o => o.OrderDate >= From && o.OrderDate <= To)
+           .ToList();
+
+            return Ok(_mapper.Map<List<OrderDTO>>(orders));
+        }
+
+
+
+
