@@ -141,3 +141,27 @@ p {
     text-decoration: none;
 }
 
+
+<script>
+var marquee = document.createElement('marquee');
+marquee.textContent = 'Đây là dòng chữ chạy';
+document.body.appendChild(marquee);
+
+marquee.style.width = '100%';
+marquee.style.height = '30px';
+marquee.style.backgroundColor = '#ccc';
+marquee.style.border = '1px solid #ddd';
+marquee.style.padding = '5px';
+
+marquee.style.animation = 'marquee 10s linear infinite';
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+</script>
+
