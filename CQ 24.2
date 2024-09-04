@@ -185,3 +185,48 @@ marquee.style.animation = 'marquee 10s linear infinite';
 }
 
 
+
+public async Task Login()
+{
+    try
+    {
+        // Kiểm tra kết nối mạng
+        var isConnected = await Connectivity.NetworkAccess == NetworkAccess.Internet;
+        if (!isConnected)
+        {
+            await Shell.Current.DisplayAlert("Lỗi", "Không có kết nối mạng", "OK");
+            return;
+        }
+
+        // Kiểm tra username và password
+        if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
+        {
+            await Shell.Current.DisplayAlert("Lỗi", "Vui lòng nhập đầy đủ thông tin", "OK");
+            return;
+        }
+
+        // Gọi hàm đăng nhập và xử lý kết quả
+        var user = await _loginRepository.Login(UserName, Password);
+        if (user == null)
+        {
+            await Shell.Current.DisplayAlert("Lỗi", "Tên đăng nhập hoặc mật khẩu không đúng", "OK");
+            return;
+        }
+
+        // Lưu thông tin người dùng vào SecureStorage (ví dụ)
+        SecureStorage.SetAsync("user", JsonConvert.SerializeObject(user));
+
+        // Chuyển đến trang Home
+        await Shell.Current.GoToAsync(nameof(HomePage));
+    }
+    catch (HttpRequestException ex)
+    {
+        await Shell.Current.DisplayAlert("Lỗi", "Lỗi kết nối đến server", "OK");
+    }
+    catch (Exception ex)
+    {
+        await Shell.Current.DisplayAlert("Lỗi", "Đã xảy ra lỗi", "OK");
+    }
+}
+
+
