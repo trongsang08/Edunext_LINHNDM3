@@ -1,50 +1,21 @@
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="YourNamespace.MainPage"
-             Title="Viettel">
+<Grid>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <StackLayout Grid.Row="0" Orientation="Horizontal" Spacing="10">
-            <Image Source="viettel_logo.png" />
-            <Label Text="Viettel" FontSize="Large" />
-            <Button Text="62+" />
-            <Button Text="" />
-        </StackLayout>
-
-        <ScrollView Grid.Row="1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Button Grid.Column="0" Text="Liên kết ngân hàng ngay" Command="{Binding LinkBankCommand}" />
-                <Button Grid.Column="1" Text="Nạp tiền" Command="{Binding TopUpCommand}" />
-
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Button Grid.Column="0" Text="Viễn thông" />
-                    <Button Grid.Column="1" Text="Mua sắm, giải trí" />
-                    <Button Grid.Column="2" Text="Hóa đơn" />
-                    <Button Grid.Column="3" Text="Đi lại, du lịch" />
-                    </Grid>
-
-            </Grid>
-        </ScrollView>
-    </Grid>
-</ContentPage>
+    <Button Grid.Column="0" Text="Viễn thông" />
+    <Button Grid.Column="1" Text="Mua sắm, giải trí" />
+    <Button Grid.Column="2" Text="Hóa đơn" />
+    <Button Grid.Column="3" Text="Đi lại, du lịch" />
+    <Button Grid.Row="1" Grid.Column="0" Text="Vay tiền" />
+    <Button Grid.Row="1" Grid.Column="1" Text="Mua bảo hiểm" />
+    <Button Grid.Row="1" Grid.Column="2" Text="Gửi tiết kiệm" Content="6.1%" />
+    <Button Grid.Row="1" Grid.Column="3" Text="Xem tất cả" />
+</Grid>
